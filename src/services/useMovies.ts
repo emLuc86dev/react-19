@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Movie } from '../types/movie'; // ajusta esto si tu tipo está en otro lugar
 import { useDebounce } from './useDebounce';
+import { updateSearchCount } from './appwrite';
 
 const API_BASE_URL = 'https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc'
 const API_URL_SEARCH = 'https://api.themoviedb.org/3/search/movie'
@@ -43,6 +44,11 @@ export const useMovies = () => {
           
           setErrorMsg(null);
           setMovieList(data.results);
+          
+          if (query && data.results.length > 0) {
+            await updateSearchCount(query, data.results[0]);
+          }
+          
           return data.results ;
           
         } catch (error) {
