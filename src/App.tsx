@@ -5,6 +5,7 @@ import Search from './components/Search'
 import Spinner from './components/Spinner';
 import MovieCard from './components/MovieCard';
 import { useMovies } from './services/useMovies';
+import MovieList from './components/MovieList';
 
 
 
@@ -13,8 +14,8 @@ import { useMovies } from './services/useMovies';
 
 
 function App() {
- const [searchTerm, setSearchTerm] = useState('')
- const {errorMsg, isLoading, movieList} = useMovies()
+ 
+ const {searchTerm, setSearchTerm, errorMsg, isLoading, movieList} = useMovies()
 
 
   return (
@@ -35,19 +36,10 @@ function App() {
         {isLoading && <Spinner />}
         {errorMsg && <p className="text-red-500">{errorMsg}</p>}
         {movieList.length === 0 && !isLoading && !errorMsg && <p className="text-white">No movies found</p>}
-        <ul className="movie-list">
-          {movieList.map((movie) => (
-           <MovieCard
-            key={movie.id}
-            id={movie.id}
-            poster_path={movie.poster_path}
-            title={movie.title}
-            release_date={movie.release_date}
-            />
-            ))}
-        </ul>
+        
+        <MovieList movieList={movieList} />
       </section>
-      <h1 className="text-white">{searchTerm}</h1>
+     
      </div>
     </main>
     </>

@@ -25,8 +25,6 @@ export const fetchMovies = async (): Promise<Movie[] | []> => {
     }
 
     const data = await response.json();
-    console.log('📽️ Películas obtenidas:', data.results);
-    
     return data.results as Movie[];
     
   } catch (error) {

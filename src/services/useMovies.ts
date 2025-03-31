@@ -3,26 +3,31 @@ import { useEffect, useState } from 'react';
 import { Movie } from '../types/movie'; // ajusta esto si tu tipo está en otro lugar
 
 const API_BASE_URL = 'https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc'
+const API_URL_SEARCH = 'https://api.themoviedb.org/3/search/movie'
+// 
 const API_KEY = import.meta.env.VITE_TMDB_ACCESS_TOKEN;
-console.log('ApiBaseUrl:', API_BASE_URL);
 
 export const useMovies = () => {
+  const [searchTerm, setSearchTerm] = useState('')
   const [movieList, setMovieList] = useState<Movie[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
    useEffect(() => {
-      const fetchData = async () => {
+      const fetchData = async (query = '') => {
         try {
           setIsLoading(true);
           setErrorMsg(null);
-          const response = await fetch(`${API_BASE_URL}`, {
-                        method: 'GET', 
-                        headers: {
-                          accept: 'application/json',
-                          Authorization: `Bearer ${API_KEY}`,
-                        },
-                      });
+          const endoint =  query ? `${API_URL_SEARCH}?query=${encodeURIComponent(query)}` :`${API_BASE_URL}`
+          const response = await fetch(
+            endoint,
+            {
+              method: 'GET', 
+              headers: {
+                accept: 'application/json',
+                Authorization: `Bearer ${API_KEY}`,
+              },
+            });
       
           if (!response.ok) {
             const errorBody = await response.text();
@@ -35,7 +40,6 @@ export const useMovies = () => {
           
           setErrorMsg(null);
           setMovieList(data.results);
-          console.log('📽️ Películas obtenidas FOMR aPP:', data.results);
           return data.results ;
           
         } catch (error) {
@@ -46,8 +50,8 @@ export const useMovies = () => {
         }
       };
   
-      fetchData()
-    }, []);
+      fetchData(searchTerm)
+    }, [searchTerm]);
    
-  return { movieList, isLoading, errorMsg };
+  return { searchTerm,setSearchTerm, movieList, isLoading, errorMsg };
 };
