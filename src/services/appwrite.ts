@@ -50,3 +50,21 @@ export const updateSearchCount = async (searchTerm: string, movie: MovieProps ) 
         console.error('Error updating search count:', error);
     }
 }
+
+export const getTrendingMovies = async () => { 
+    try {
+        const result = await databases.listDocuments(DATABASE_ID, COLLECTION_ID, [
+            Query.limit(10), // Limit the number of results to 10
+            Query.orderDesc('count'), // Order the results by count in descending order
+            
+        ]);
+       if (result && result.documents.length > 0) {
+        return result.documents
+       }
+       return [];
+    } catch (error) {
+        console.error('Error fetching trending movies:', error);
+        
+    }
+
+}
