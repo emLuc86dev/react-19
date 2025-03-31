@@ -1,6 +1,7 @@
 // src/hooks/useMovies.ts
 import { useEffect, useState } from 'react';
 import { Movie } from '../types/movie'; // ajusta esto si tu tipo está en otro lugar
+import { useDebounce } from './useDebounce';
 
 const API_BASE_URL = 'https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc'
 const API_URL_SEARCH = 'https://api.themoviedb.org/3/search/movie'
@@ -9,6 +10,8 @@ const API_KEY = import.meta.env.VITE_TMDB_ACCESS_TOKEN;
 
 export const useMovies = () => {
   const [searchTerm, setSearchTerm] = useState('')
+  const debouncedSearchTerm = useDebounce(searchTerm, 500); // debouncing 
+
   const [movieList, setMovieList] = useState<Movie[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -50,8 +53,8 @@ export const useMovies = () => {
         }
       };
   
-      fetchData(searchTerm)
-    }, [searchTerm]);
+      fetchData(debouncedSearchTerm)
+    }, [debouncedSearchTerm]);
    
   return { searchTerm,setSearchTerm, movieList, isLoading, errorMsg };
 };
