@@ -9,10 +9,6 @@ import MovieList from './components/MovieList';
 
 
 
-
-
-
-
 function App() {
  
  const {searchTerm, setSearchTerm, errorMsg, isLoading, movieList} = useMovies()
