@@ -17,6 +17,15 @@ client
 // Define the type for the movie properties that will be used
 type MovieProps = Pick<Movie, 'id' | 'poster_path'>
 
+export type TrendingMovieProps = {
+    $id: string;
+    count: number;
+    movie_id: number;
+    poster_url: string;
+    searchTerm: string;
+    $updatedAt: string;
+}
+
 // Initialize the Appwrite Databases service with the client
 const databases = new Databases(client);
 
@@ -51,7 +60,7 @@ export const updateSearchCount = async (searchTerm: string, movie: MovieProps ) 
     }
 }
 
-export const getTrendingMovies = async () => { 
+export const getTrendingMovies = async (): Promise<TrendingMovieProps[] | []> => { 
     try {
         const result = await databases.listDocuments(DATABASE_ID, COLLECTION_ID, [
             Query.limit(10), // Limit the number of results to 10
@@ -59,12 +68,21 @@ export const getTrendingMovies = async () => {
             
         ]);
        if (result && result.documents.length > 0) {
-        return result.documents
+        
+        const trendingMovies: TrendingMovieProps[] = result.documents.map(doc => ({
+            $id: doc.$id, // assuming Document has this field
+            count: doc.count || 0, // or some default value if not present
+            movie_id: doc.movie_id || 0, // handle default value if needed
+            poster_url: doc.poster_url || "", // handle default value if needed
+            searchTerm: doc.searchTerm || "", // handle default value if needed
+            $updatedAt: doc.$updatedAt || "", // handle default value if needed
+          }));
+        return trendingMovies; // Return the list of trending movies
        }
        return [];
     } catch (error) {
         console.error('Error fetching trending movies:', error);
-        
+        return [];
     }
 
 }
